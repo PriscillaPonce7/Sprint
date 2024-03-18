@@ -1,12 +1,13 @@
 # Definición clase Productos
 class Producto:
+  #Una vez definida la clase, definimos las variables que contendrá con la ayuda de self
   def __int__(self, id, nombre, descripcion, cantidad, precio):
       self.id = id
       self.nombre = nombre
       self.descripcion = descripcion
       self.cantidad = cantidad
       self.precio = precio
-
+#Y luego definimos que información se entregará al momento de consultar obtener información con el return que devolverá el resultado de cada variable, con la ayuda del self y la definición con " "
   def obtener_informacion(self):
     return {
         "id": self.id,
@@ -17,6 +18,7 @@ class Producto:
     }
 
 # Métodos actualizar_* modifican los atributos correspondientes al producto
+#Definimos en el código lo que significa actualizar los atributos correspondiente a la clase producto, con la ayuda de self
   def actualizar_nombre(self, nombre):
       self.nombre = nombre
 
@@ -28,25 +30,26 @@ class Producto:
 
   def actualizar_precio(self, precio):
       self.precio = (precio)
-
+#Se nos pide diseñar un inventario, por lo que generamos otra clase con la ayuda de self
 class Inventario:
+  #Utilizamos init para inicializar los atributos que contendrá un objeto, en este caso los productos del inventario.
   def __init__(self):
       self.productos = {}
-
+#Definimos que significa agregar producto
   def agregar_producto(self, producto):
-      if producto.id in self.productos:
-        print(f"Producto con id {producto.id} ya existe.")
-      else:
+      if producto.id in self.productos: #Utilizamos el if para agregar una condición que se cumpla de ser verdadera y el in para asegurarnos de que el valor id esté presente en los datos
+        print(f"Producto con id {producto.id} ya existe.") #Imprimimos lo que va a decir
+      else: #Utilizamos el else para decirle al código que tiene que hacer cuando la condición del if no se cumple
           self.productos[producto.id] = producto
-          print(f"Producto con id {producto.id} agregado al inventario.")
-
+          print(f"Producto con id {producto.id} agregado al inventario.") #Imprimimos lo que va a decir
+#Definimos que es eliminar productos
   def eliminar_productos(self, id):
       if id in self.productos:
-        del self.productos[id]
-        print(f"Producto con id {id} eliminado del inventario.")
-
-  def actualizar_producto(self, id, nombre=None, descripcion=None, cantidad=None, precio=None):
-      if id in self.productos:
+        del self.productos[id] #Como queremos eliminar un producto del inventario utilizamos del, que no ayudará a eliminar las variables que queramos eliminar en este caso el id.
+        print(f"Producto con id {id} eliminado del inventario.") #Imprimimos lo que va a decir
+#Deinimos que es actualizar productos y las variables necesarias para hacerlo
+  def actualizar_producto(self, id, nombre=None, descripcion=None, cantidad=None, precio=None): #None significa ausencia de valor, entonces cada que haya ausencia de valor el código pedirá actualizar la información.
+      if id in self.productos: #Nos ayudamos con los if para condicionar todas las variables
           producto = self.productos[id]
           if nombre is not None:
               producto.actualizar_nombre(nombre)
@@ -56,17 +59,96 @@ class Inventario:
               producto.actualizar_cantidad(cantidad)
           if precio is not None:
               producto.actualizar_precio(precio)
-          print(f"Producto con id {id} actualizado en el inventario.")
+          print(f"Producto con id {id} actualizado en el inventario.") #Imprimimos lo que va a decir
 
-      else:
+      else: #Y también nos ayudamos con el else, para cuando todo lo demás no se cumpla.
           print(f"Producto con id {id} no encontrado en el inventario.")
-
+#Definimos que es obtener información de un producto, para buscar un producto con su id y nos ayudamos del if y el else para condicionar lo que sucederá
   def obtener_informacion_producto(self, id):
       if id in self.productos:
           return self.productos[id].obtener_informacion()
       else:
           return f"Producto con id {id} no encontrado en el inventario."
-
+#Definimos generar informe, para listar los productos del inventario con su información total de productos y el valor total en el inventario. 
   def generar_informe(self):
       for producto in self.productos.values():
-          print(producto.obtener_informacion())
+          print(producto.obtener_informacion()) #Imprimimos lo que va a decir
+
+
+#Implementamos un menú de usuario interactivo
+def mostrar_menu(): #Definimos que podrá hacer el usuario asignandole un número, para cuando vea el menú aprete sólo un número, según lo que requiera hacer. 
+    print("\nSistema de Gestión de Inventario") #Imprimimos lo que va a decir
+    print("1. Agregar producto")
+    print("2. Eliminar producto")
+    print("3. Actualizar producto")
+    print("4. Mostrar información de un producto")
+    print("5. Generar informe del inventario")
+    print("6. Salir")
+    return input("Seleccione una opción: ") #Una ves le aparezca el listado, podrá seleccionar el número que necesite
+#Definimos que dará como resultado cuando el número ingresado no coincida con los números del 1 al 6
+def obtener_entero(mensaje):
+   while True: #Insertamos el bucle while que se ejecutará si es verdadera, de lo contrario se ejecutará lo que sigue
+        try: #Cuando se genera una excepción (while no sea verdadero)
+            return int(input(mensaje))
+        except ValueError: #Cómo se manejará la excepción, en este caso si no se cumple while (o sea si no se utiliza un número del 1 al 6) aparecerá el siguiente mensaje.
+                print("Por favor, ingrese un número entero válido.")
+#Definimos otra variable para manejar los errores que se puedan dar por parte del usuario y nos ayudamos de while, try y except
+def obtener_flotante(mensaje):
+    while True:
+        try:
+            return float(input(mensaje))
+        except ValueError:
+            print("Por favor, ingrese un número flotante válido.") #Imprimimos lo que va a decir
+
+
+#Definimos donde comenzará el bucle con la definición de main, para manejar las opciones del inventario.
+def main():
+    inventario = Inventario()
+
+    while True: #Si es verdadero¿ se mostrará el menú
+        opcion = mostrar_menu()
+
+        if opcion == '1': #Definimos con el if la primera variable, en el caso de que se presione el 1
+            id = obtener_entero("ID del producto: ")
+            nombre = input("Nombre del producto: ")
+            descripcion = input("Descripción del producto: ")
+            cantidad = obtener_entero("Cantidad: ")
+            precio = obtener_flotante("Precio: ")
+            producto = Producto(id, nombre, descripcion, cantidad, precio)
+            inventario.agregar_producto(producto)
+
+        elif opcion == '2': #Definimos con el elif si la condición 1 no se cumple, en el caso de que se presione el 2
+            id = obtener_entero("ID del producto a eliminar: ")
+            inventario.eliminar_producto(id)
+
+        elif opcion == '3': #Definimos con el elif si la condición 2 no se cumple, en el caso de que se presione el 3
+            id = obtener_entero("ID del producto a actualizar: ")
+            nombre = input("Nuevo nombre (dejar en blanco para no cambiar): ")
+            descripcion = input("Nueva descripción (dejar en blanco para no cambiar): ")
+            cantidad_str = input("Nueva cantidad (dejar en blanco para no cambiar): ")
+            precio_str = input("Nuevo precio (dejar en blanco para no cambiar): ")
+
+            cantidad = int(cantidad_str) if cantidad_str.isdigit() else None #Utilizamos el int para cuando se quiera poner una cantidad entera de un producto .
+            precio = float(precio_str) if precio_str.replace('.','', 1).isdigit() else None #Utilizamos el float para el precio, ya que puede tener decimales (dependiendo del país)
+
+            inventario.actualizar_producto(id, nombre if nombre else None, descripcion if descripcion else None, cantidad if cantidad is not None else None, precio if precio is not None else None)
+
+        elif opcion == '4': #Definimos con el elif si la condición 3 no se cumple, en el caso de que se presione el 4
+            id = obtener_entero("ID del producto a mostrar: ")
+            info = inventario.obtener_informacion_producto(id)
+            if info:
+               print(info)
+            else:
+               print(f"Producto con id {id} no encontrado.")
+
+        elif opcion == '5': #Definimos con el elif si la condición 4 no se cumple, en el caso de que se presione el 5
+            inventario.generar_informe()
+
+        elif opcion == '6': #Definimos con el elif si la condición 5 no se cumple, en el caso de que se presione el 6 
+            print("Saliendo del sistema...")
+            break # Para detener la ejecución del bucle
+
+        else:
+            print("Opción no válida. Intente de nuevo.") #Utilizamos el else, en el caso de que se utilice un número que no sea parte de la selección (1 al 6)
+if __name__ == "_main_": #Indicamos que es el código principal que se estará ejecutando
+   main()
